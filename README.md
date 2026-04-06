@@ -51,3 +51,8 @@ In GitHub repository settings:
 
 If you use the contact form locally, keep `VITE_CONTACT_FORM_ENDPOINT` in your local `.env`.
 For GitHub Actions deploys, the same value must also exist as a repository variable so the production build can read it.
+
+The public assets include:
+
+- `resume.txt` for the download button
+- `og-image.svg` for social previews
