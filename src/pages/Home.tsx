@@ -61,7 +61,7 @@ function SectionHeading({
 
 export default function Home() {
   const contactEndpoint = import.meta.env.VITE_CONTACT_FORM_ENDPOINT?.trim();
-  const resumeDownloadUrl = `${import.meta.env.BASE_URL}resume.txt`;
+  const resumeDownloadUrl = `${import.meta.env.BASE_URL}resume.pdf`;
   const [submitState, setSubmitState] = useState<
     'idle' | 'sending' | 'success' | 'error'
   >('idle');
@@ -207,7 +207,7 @@ export default function Home() {
                 </a>
               </Button>
               <Button variant="outline" asChild>
-                <a href={resumeDownloadUrl} download="Arkapong-Jaroensiri-Resume.txt">
+                <a href={resumeDownloadUrl} download="Arkapong-Jaroensiri-Resume.pdf">
                   Download resume
                 </a>
               </Button>

@@ -54,5 +54,5 @@ For GitHub Actions deploys, the same value must also exist as a repository varia
 
 The public assets include:
 
-- `resume.txt` for the download button
+- `resume.pdf` for the download button
 - `og-image.svg` for social previews
