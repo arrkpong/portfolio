@@ -56,3 +56,4 @@ The public assets include:
 
 - `resume.pdf` for the download button
 - `og-image.svg` for social previews
+- `robots.txt` and `sitemap.xml` for SEO
