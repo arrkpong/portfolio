@@ -26,6 +26,12 @@ const navLinks = sectionOrder.map((section) => ({
   href: `#${section.toLowerCase().replace(/\s+/g, '-')}`,
 }));
 
+const heroHighlights = [
+  { label: 'Core stack', value: 'React, Django, Rust' },
+  { label: 'Work style', value: 'Full-stack delivery' },
+  { label: 'Languages', value: 'Thai, English' },
+];
+
 const fadeIn = (delay = 0): MotionProps => ({
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
@@ -59,6 +65,13 @@ export default function Home() {
     'idle' | 'sending' | 'success' | 'error'
   >('idle');
   const [submitMessage, setSubmitMessage] = useState('');
+  const isSubmitting = submitState === 'sending';
+  const submitTone =
+    submitState === 'error'
+      ? 'text-red-600'
+      : submitState === 'success'
+        ? 'text-emerald-700'
+        : 'text-muted-foreground';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -119,7 +132,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">
-      <header className="sticky top-0 z-50 border-b border-border bg-card/75 backdrop-blur supports-backdrop-filter:bg-card/60">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute left-[-8rem] top-[-6rem] h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute right-[-10rem] top-24 h-96 w-96 rounded-full bg-muted/60 blur-3xl" />
+        <div className="absolute bottom-[-10rem] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+      </div>
+
+      <header className="sticky top-0 z-50 border-b border-border/80 bg-card/80 backdrop-blur supports-backdrop-filter:bg-card/70">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
           <a href="#top" className="text-lg font-semibold tracking-tight transition hover:text-primary">
             {profile.name}
@@ -159,6 +178,14 @@ export default function Home() {
             <p className="max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
               {profile.summary}
             </p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {heroHighlights.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-border bg-card/70 p-4">
+                  <p className="text-xs uppercase tracking-eyebrow text-muted-foreground">{item.label}</p>
+                  <p className="mt-2 text-sm font-medium text-foreground">{item.value}</p>
+                </div>
+              ))}
+            </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild>
                 <a href="#projects">
@@ -461,48 +488,53 @@ export default function Home() {
 
           <form className="space-y-4 rounded-3xl border border-border bg-card/70 p-6 shadow-sm" onSubmit={handleSubmit}>
             <div>
-              <label className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
+              <label htmlFor="subject" className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
                 Subject
               </label>
-              <Input name="subject" placeholder="Project, role, or collaboration" className="mt-2" />
+              <Input
+                id="subject"
+                name="subject"
+                placeholder="Project, role, or collaboration"
+                autoComplete="off"
+                required
+                className="mt-2"
+              />
             </div>
             <div>
-              <label className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
+              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
                 Email
               </label>
               <Input
+                id="email"
                 name="email"
                 type="email"
                 placeholder="you@example.com"
+                autoComplete="email"
+                required
                 className="mt-2"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
+              <label htmlFor="notes" className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
                 Notes
               </label>
               <Textarea
+                id="notes"
                 name="notes"
                 rows={5}
                 placeholder="Tell me what you're building..."
+                required
+                spellCheck
                 className="mt-2"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={submitState === 'sending'}>
-              {submitState === 'sending' ? 'Sending...' : 'Send message'}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Sending...' : 'Send message'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            {submitMessage ? (
-              <p
-                className={
-                  submitState === 'error'
-                    ? 'text-sm text-red-600'
-                    : 'text-sm text-emerald-700'
-                }
-              >
-                {submitMessage}
-              </p>
-            ) : null}
+            <p aria-live="polite" className={`min-h-5 text-sm ${submitTone}`}>
+              {submitMessage}
+            </p>
             {!contactEndpoint ? (
               <p className="text-xs text-muted-foreground">
                 Add `VITE_CONTACT_FORM_ENDPOINT` in `.env` to enable real email delivery.
