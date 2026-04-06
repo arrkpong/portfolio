@@ -45,6 +45,9 @@ In GitHub repository settings:
 
 1. Open `Settings` > `Pages`
 2. Set `Source` to `GitHub Actions`
-3. Push to `main`
+3. Open `Settings` > `Secrets and variables` > `Actions` > `Variables`
+4. Add `VITE_CONTACT_FORM_ENDPOINT` with your form provider endpoint
+5. Push to `main`
 
-If you use the contact form, keep `VITE_CONTACT_FORM_ENDPOINT` in your local `.env` and rebuild before deployment.
+If you use the contact form locally, keep `VITE_CONTACT_FORM_ENDPOINT` in your local `.env`.
+For GitHub Actions deploys, the same value must also exist as a repository variable so the production build can read it.
