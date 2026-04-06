@@ -36,3 +36,15 @@ npm run dev
 npm run lint
 npm run build
 ```
+
+## Deploy
+
+This repo is set up to deploy from GitHub Actions on every push to `main`.
+
+In GitHub repository settings:
+
+1. Open `Settings` > `Pages`
+2. Set `Source` to `GitHub Actions`
+3. Push to `main`
+
+If you use the contact form, keep `VITE_CONTACT_FORM_ENDPOINT` in your local `.env` and rebuild before deployment.
