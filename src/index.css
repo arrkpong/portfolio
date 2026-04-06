@@ -117,3 +117,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.tracking-eyebrow {
+  letter-spacing: 0.2em;
+}
