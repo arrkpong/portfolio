@@ -112,6 +112,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
 
   * {
@@ -120,13 +121,13 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(circle at top, hsl(var(--primary) / 0.04), transparent 35%),
-      linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background)));
+      radial-gradient(circle at top, color-mix(in srgb, var(--primary) 4%, transparent), transparent 35%),
+      linear-gradient(to bottom, var(--background), var(--background));
   }
 
   ::selection {
-    background: hsl(var(--primary) / 0.14);
-    color: hsl(var(--foreground));
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
+    color: var(--foreground);
   }
 }
 

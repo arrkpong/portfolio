@@ -1,4 +1,4 @@
-﻿import { ArrowRight, ExternalLink, Mail, Phone, Globe } from 'lucide-react';
+import { ArrowRight, ExternalLink, Mail, Phone, Globe } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { motion, type MotionProps } from 'framer-motion';
 
@@ -162,8 +162,7 @@ export default function Home() {
 
       <main id="top" className="mx-auto flex max-w-6xl flex-col gap-20 px-4 py-10 md:px-6 md:py-14">
         <motion.section
-          className="grid gap-8 lg:grid-cols-1"
-          style={{ gridTemplateColumns: '1.2fr 0.8fr' }}
+          className="grid gap-8 grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]"
           {...fadeIn()}
         >
           <div className="space-y-6">
@@ -453,7 +452,7 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-3xl border-border/70">
+            <Card id="certificate" className="rounded-3xl border-border/70">
               <CardHeader>
                 <Badge variant="outline" className="w-fit">
                   {certificate.year}
