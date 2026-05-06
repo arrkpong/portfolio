@@ -1,11 +1,11 @@
 import Home from "./pages/Home"
+import { ThemeProvider } from "./components/theme-provider"
 
 function App() {
-  
   return (
-    <>
-    <Home/>
-    </>
+    <ThemeProvider>
+      <Home />
+    </ThemeProvider>
   )
 }
 

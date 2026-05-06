@@ -12,9 +12,30 @@ import {
 export const profile = {
   name: 'Arkapong Jaroensiri (Prem)',
   title: 'Full Stack Developer',
+  headline: 'Full Stack Developer building internal systems and full-stack web applications.',
+  shortSummary:
+    'I build production-ready internal tools across Django DRF, Node.js, TypeScript, PostgreSQL, Vue.js, React, and C# automation.',
   summary:
-    'Full-stack developer focused on scalable, user-focused web applications. I work across frontend and backend with Rust, Python, JavaScript, TypeScript, React, Django, and Axum, and I care about clean delivery, maintainability, and practical problem solving.',
+    'Full Stack Developer with hands-on experience building internal web applications, RESTful APIs, dashboards, and automation tools. Strong in backend development with Django DRF, Node.js, TypeScript, PostgreSQL, Docker, and GitHub Actions, with frontend experience in Vue.js and React. Delivered a production incident and blacklist management module within a 3-month deadline and built automation tools that reduced manual drafting time by 70%.',
 };
+
+export const impactMetrics = [
+  {
+    value: '70%',
+    label: 'Manual drafting time reduction',
+    detail: 'Built C# and Python automation tools for structural detailing workflows.',
+  },
+  {
+    value: '3 mo.',
+    label: 'Production delivery window',
+    detail: 'Delivered an incident and blacklist module within a strict project timeline.',
+  },
+  {
+    value: 'API + UI',
+    label: 'Full-stack ownership',
+    detail: 'Designed backend workflows, REST APIs, data models, and Vue.js dashboards.',
+  },
+];
 
 export const contactLinks = [
   { label: '062-610-3571', href: 'tel:+660626103571', icon: Phone as LucideIcon },
@@ -25,34 +46,39 @@ export const contactLinks = [
     href: 'https://linkedin.com/in/arrkpong/',
     icon: Globe as LucideIcon,
   },
-  { label: 'arrkpong.github.io', href: 'https://arrkpong.github.io', icon: Globe as LucideIcon },
+  { label: 'arrkpong.github.io/portfolio', href: 'https://arrkpong.github.io/portfolio', icon: Globe as LucideIcon },
 ];
 
 export const languages = [
-  'English: Basic (Reading, Writing, Speaking)',
-  'Thai: Native (Reading, Writing, Speaking)',
+  'Thai: Native',
+  'English: Basic',
 ];
 
 export const skillGroups = [
   {
     title: 'Programming Languages',
     icon: SquareCode,
-    items: ['Rust', 'Python', 'JavaScript', 'TypeScript', 'SQL'],
+    items: ['TypeScript', 'JavaScript', 'Python', 'Rust', 'C#'],
   },
   {
-    title: 'Frameworks & Libraries',
+    title: 'Backend',
     icon: BriefcaseBusiness,
-    items: ['React', 'Django', 'Axum', 'Tailwind CSS', 'Vue.js'],
+    items: ['Node.js', 'Django DRF', 'Axum', 'RESTful API'],
   },
   {
-    title: 'Databases & Infra',
+    title: 'Frontend',
+    icon: Globe,
+    items: ['Vue.js', 'React', 'HTML', 'CSS3', 'Tailwind CSS'],
+  },
+  {
+    title: 'Database & DevOps',
     icon: TreePine,
-    items: ['PostgreSQL', 'SQLite', 'Docker', 'Nginx', 'DigitalOcean'],
+    items: ['PostgreSQL', 'SQLite', 'SQL', 'Docker', 'Nginx', 'GitHub Actions', 'DigitalOcean'],
   },
   {
-    title: 'Delivery & Tools',
+    title: 'Tools',
     icon: Award,
-    items: ['Git', 'GitHub Actions', 'Postman', 'Figma', 'Draw.io', 'DBDiagram.io'],
+    items: ['Git', 'GitHub', 'Postman', 'Figma', 'Draw.io', 'DBDiagram.io'],
   },
 ];
 
@@ -66,50 +92,65 @@ export const softSkills = [
 
 export const experience = [
   {
-    role: 'Sole Developer',
-    company: 'Contracted by Accord Innovations Co., Ltd',
-    project: 'Top Market system Incident & Blacklist (Central Retail)',
-    year: '2025',
-    technologies: ['Django (DRF)', 'Vue.js', 'Postgres', 'Subversion'],
+    role: 'Full Stack Developer / Sole Developer',
+    company: 'Central Retail | Contracted by Accord Innovations Co., Ltd.',
+    project: 'Top Market System Incident & Blacklist',
+    year: 'Jan 2025 - Apr 2025',
+    impact: 'Shipped a production internal module in 3 months.',
+    technologies: ['Django DRF', 'Vue.js', 'PostgreSQL', 'Subversion'],
     highlights: [
-      'Implemented an incident reporting and blacklist management module for a Top Market system under a fast-paced 3-month contract.',
-      'Used Django to create secure and scalable RESTful APIs for managing incidents, user reports, and blacklist logic.',
-      'Developed a user-friendly front-end with Vue.js for internal staff to efficiently review, approve, or reject incident reports and blacklist submissions.',
+      'Delivered an internal incident reporting and blacklist management module within a strict 3-month project timeline.',
+      'Designed and implemented secure RESTful APIs with Django DRF to support incident workflows, blacklist approval logic, data processing, and user access control.',
+      'Built a responsive Vue.js dashboard for operational staff to track, review, and approve blacklist submissions.',
+      'Structured backend data models and database workflows to maintain reliable incident records and approval history.',
     ],
   },
   {
-    role: 'Team Developer',
+    role: 'Software Developer',
     company: 'CivilPark International Co. Ltd.',
     project: 'Engineering Data Automation Platform',
-    year: '2025-2026',
-    technologies: ['Revit', 'Python'],
+    year: 'Jun 2025 - Present',
+    impact: 'Reduced manual structural drafting time by 70%.',
+    technologies: ['C#', 'Python', 'Revit API'],
     highlights: [
-      'Analyzed existing engineering workflows to identify bottlenecks and spearheaded automation initiatives, significantly reducing manual detailing time.',
-      'Conducted rigorous software testing and implemented scripts to automate structural data processes, enhancing overall operational efficiency.',
+      'Built automation tools using C# and Python that reduced manual structural detailing and drafting time by 70%.',
+      'Designed object-oriented data processing logic to extract, transform, and manipulate 3D engineering data through the Revit API.',
+      'Improved engineering workflow efficiency by deploying custom automation scripts for repetitive drafting and data preparation tasks.',
     ],
   },
 ];
 
 export const projects = [
   {
-    role: 'Sole Developer',
-    year: '2023',
-    title: 'Top-up Card System',
-    description:
-      'Web-based top-up card system to handle card purchases and payments.',
-    technologies: ['Django', 'Stripe Payment'],
+    role: 'Personal Project',
+    year: '2026',
+    title: 'High-Performance Microservice with Rust',
+    description: 'Backend microservice using Rust and Axum for handling concurrent requests efficiently.',
+    problem: 'Explore a fast backend service architecture for concurrent request handling and reliable data flow.',
+    approach: 'Designed Axum API endpoints backed by PostgreSQL and added Dragonfly for in-memory request processing support.',
+    outcome: 'Produced a focused service prototype around concurrency, request throughput, and clean backend boundaries.',
+    technologies: ['Rust', 'Axum', 'PostgreSQL', 'Pingora', 'Dragonfly'],
     highlights: [
-      'Integrated Stripe API for secure online payment processing.',
-      'Ensured high availability and scalability for handling multiple transactions.',
+      'Built a backend microservice using Rust and Axum for handling concurrent requests efficiently.',
+      'Designed API endpoints and PostgreSQL-backed data flows for reliable request handling.',
+      'Used Dragonfly as an in-memory data store to improve request processing performance.',
     ],
   },
   {
-    role: 'Sole Developer',
-    year: '2026',
-    title: 'High-Performance Microservice with Rust',
-    description: 'High-performance backend service using Rust and Axum capable of handling concurrent requests efficiently.',
-    technologies: ['Axum', 'Postgres', 'Pingora', 'Dragonfly'],
-    highlights: ['Built with a focus on concurrency, throughput, and clean service boundaries.'],
+    role: 'Final University Project',
+    year: '2023',
+    title: 'Top-up Card System',
+    description:
+      'Web-based top-up card system for card purchases and payment processing.',
+    problem: 'Create a complete university project that could process card purchases and payment confirmation flows.',
+    approach: 'Built Django backend workflows for purchase records, transaction handling, and Stripe payment integration.',
+    outcome: 'Delivered a working e-commerce style top-up card system with secure online payment processing.',
+    technologies: ['Django', 'Stripe API'],
+    highlights: [
+      'Developed a web-based top-up card system for card purchases and payment processing.',
+      'Integrated Stripe API for secure online payments.',
+      'Designed backend workflows for purchase records, transaction handling, and payment confirmation.',
+    ],
   },
 ];
 
@@ -118,10 +159,7 @@ export const militaryService = {
   period: '2018 - 2020',
   rank: 'Private First Class (Pfc.)',
   summary: [
-    'Served as a multi-departmental messenger at the 3rd Infantry Division HQ and 3rd Infantry Regiment, supporting the Operations, Intelligence, Finance, and Deputy Commander offices.',
-    'Played a key role in ensuring timely and secure communication across departments, handling both routine and time-sensitive messages.',
-    'Assisted in administrative support and coordination under high-pressure and confidential environments.',
-    'Developed patience, responsibility, and organizational skills applicable to both military and civilian team environments.',
+    'Served in administrative and secure multi-department communication roles.',
   ],
 };
 

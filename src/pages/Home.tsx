@@ -1,17 +1,34 @@
-import { ArrowRight, ExternalLink, Mail, Phone, Globe } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
+import {
+  ArrowRight,
+  Code2,
+  Database,
+  Download,
+  ExternalLink,
+  Globe,
+  Mail,
+  Menu,
+  Phone,
+  Server,
+  Workflow,
+  X,
+} from 'lucide-react';
 import { motion, type MotionProps } from 'framer-motion';
-
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Toaster, toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { ThemeToggle } from '@/components/theme-toggle';
 import {
   certificate,
-  contactLinks,
   education,
   experience,
+  impactMetrics,
   languages,
   militaryService,
   profile,
@@ -26,10 +43,11 @@ const navLinks = sectionOrder.map((section) => ({
   href: `#${section.toLowerCase().replace(/\s+/g, '-')}`,
 }));
 
-const heroHighlights = [
-  { label: 'Core stack', value: 'React, Django, Rust' },
-  { label: 'Work style', value: 'Full-stack delivery' },
-  { label: 'Languages', value: 'Thai, English' },
+const architectureSteps = [
+  { label: 'API', value: 'Django DRF / Axum / Node.js', icon: Server },
+  { label: 'Data', value: 'PostgreSQL / SQLite / Dragonfly', icon: Database },
+  { label: 'UI', value: 'Vue.js / React / Tailwind CSS', icon: Code2 },
+  { label: 'Automation', value: 'C# / Python / Revit API', icon: Workflow },
 ];
 
 const fadeIn = (delay = 0): MotionProps => ({
@@ -59,47 +77,35 @@ function SectionHeading({
   );
 }
 
+const contactSchema = z.object({
+  subject: z.string().min(1, 'Subject is required'),
+  email: z.string().email('Please enter a valid email address'),
+  notes: z.string().min(10, 'Please write at least 10 characters for your notes'),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
+
 export default function Home() {
   const contactEndpoint = import.meta.env.VITE_CONTACT_FORM_ENDPOINT?.trim();
   const resumeDownloadUrl = `${import.meta.env.BASE_URL}resume.pdf`;
-  const [submitState, setSubmitState] = useState<
-    'idle' | 'sending' | 'success' | 'error'
-  >('idle');
-  const [submitMessage, setSubmitMessage] = useState('');
-  const isSubmitting = submitState === 'sending';
-  const submitTone =
-    submitState === 'error'
-      ? 'text-red-600'
-      : submitState === 'success'
-        ? 'text-emerald-700'
-        : 'text-muted-foreground';
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+  });
 
+  const onSubmit = async (data: ContactFormValues) => {
     if (!contactEndpoint) {
-      setSubmitState('error');
-      setSubmitMessage(
-        'Set VITE_CONTACT_FORM_ENDPOINT to your form provider endpoint before using this form.'
-      );
+      toast.error('Endpoint Missing', {
+        description: 'Set VITE_CONTACT_FORM_ENDPOINT to your form provider endpoint before using this form.',
+      });
       return;
     }
-
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
-    const subject = String(formData.get('subject') ?? '').trim();
-    const email = String(formData.get('email') ?? '').trim();
-    const notes = String(formData.get('notes') ?? '').trim();
-
-    if (!subject || !email || !notes) {
-      setSubmitState('error');
-      setSubmitMessage('Please fill in subject, email, and notes.');
-      return;
-    }
-
-    setSubmitState('sending');
-    setSubmitMessage('');
 
     try {
       const response = await fetch(contactEndpoint, {
@@ -109,9 +115,7 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          subject,
-          email,
-          notes,
+          ...data,
           name: profile.name,
         }),
       });
@@ -120,19 +124,20 @@ export default function Home() {
         throw new Error(`Request failed with status ${response.status}`);
       }
 
-      form.reset();
-      setSubmitState('success');
-      setSubmitMessage('Message sent. I will reply by email.');
+      reset();
+      toast.success('Message sent successfully!', {
+        description: 'I will reply to your email shortly.',
+      });
     } catch (error) {
-      setSubmitState('error');
-      setSubmitMessage(
-        error instanceof Error ? error.message : 'Failed to send the message.'
-      );
+      toast.error('Failed to send the message.', {
+        description: error instanceof Error ? error.message : 'Please try again.',
+      });
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">
+      <Toaster richColors position="bottom-right" />
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute left-[-8rem] top-[-6rem] h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute right-[-10rem] top-24 h-96 w-96 rounded-full bg-muted/60 blur-3xl" />
@@ -151,45 +156,74 @@ export default function Home() {
               </a>
             ))}
           </nav>
-          <Button asChild size="sm">
-            <a href="#contact">
-              Contact
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative lg:hidden"
+              aria-label={isMobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={isMobileNavOpen}
+              onClick={() => setIsMobileNavOpen((current) => !current)}
+            >
+              {isMobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+            <Button asChild size="sm">
+              <a href="#contact">
+                Contact
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
         </div>
+        {isMobileNavOpen ? (
+          <nav className="border-t border-border bg-card px-4 py-3 lg:hidden">
+            <div className="mx-auto grid max-w-6xl grid-cols-2 gap-2 text-sm">
+              {navLinks.map(({ label, href }) => (
+                <a
+                  key={href}
+                  href={href}
+                  className="rounded-2xl border border-border px-3 py-2 text-muted-foreground transition hover:border-primary/40 hover:text-primary"
+                  onClick={() => setIsMobileNavOpen(false)}
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </nav>
+        ) : null}
       </header>
 
       <main id="top" className="mx-auto flex max-w-6xl flex-col gap-20 px-4 py-10 md:px-6 md:py-14">
         <motion.section
-          className="grid gap-8 grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]"
+          className="grid grid-cols-1 gap-8 lg:grid-cols-[1.08fr_0.92fr]"
           {...fadeIn()}
         >
           <div className="space-y-6">
-            <Badge variant="primary" className="gap-2 tracking-eyebrow">
-              Available for work
-            </Badge>
             <div className="space-y-3">
               <h1 className="max-w-3xl text-4xl font-semibold leading-tight tracking-tight md:text-6xl">
                 {profile.name}
               </h1>
-              <p className="text-xl text-muted-foreground">{profile.title}</p>
+              <p className="max-w-2xl text-2xl font-medium leading-snug text-foreground md:text-3xl">
+                {profile.headline}
+              </p>
             </div>
-            <p className="max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              {profile.summary}
+            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+              {profile.shortSummary}
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
-              {heroHighlights.map((item) => (
+              {impactMetrics.map((item) => (
                 <div key={item.label} className="rounded-2xl border border-border bg-card/70 p-4">
-                  <p className="text-xs uppercase tracking-eyebrow text-muted-foreground">{item.label}</p>
-                  <p className="mt-2 text-sm font-medium text-foreground">{item.value}</p>
+                  <p className="text-2xl font-semibold tracking-tight text-primary">{item.value}</p>
+                  <p className="mt-2 text-sm font-medium text-foreground">{item.label}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{item.detail}</p>
                 </div>
               ))}
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild>
                 <a href="#projects">
-                  View resume highlights
+                  View case studies
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
@@ -207,6 +241,7 @@ export default function Home() {
               </Button>
               <Button variant="outline" asChild>
                 <a href={resumeDownloadUrl} download="Arkapong-Jaroensiri-Resume.pdf">
+                  <Download className="mr-2 h-4 w-4" />
                   Download resume
                 </a>
               </Button>
@@ -215,22 +250,27 @@ export default function Home() {
 
           <Card className="border-primary/15 bg-card/80">
             <CardHeader>
-              <CardDescription className="uppercase tracking-eyebrow">Contact</CardDescription>
-              <CardTitle>Reach me directly</CardTitle>
+              <CardDescription className="uppercase tracking-eyebrow">Delivery proof</CardDescription>
+              <CardTitle>Backend, UI, data, and automation in one workflow</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-              {contactLinks.map(({ label, href, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target={href.startsWith('http') ? '_blank' : undefined}
-                  rel={href.startsWith('http') ? 'noreferrer' : undefined}
-                  className="flex items-center gap-3 rounded-2xl border border-border bg-background/80 px-4 py-3 transition hover:border-primary/40 hover:bg-muted/30"
-                >
-                  <Icon className="h-4 w-4 text-primary" />
-                  <span>{label}</span>
-                </a>
+              {architectureSteps.map(({ label, value, icon: Icon }) => (
+                <div key={label} className="flex items-center gap-3 rounded-2xl border border-border bg-background/80 px-4 py-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-eyebrow text-muted-foreground">{label}</p>
+                    <p className="mt-1 font-medium text-foreground">{value}</p>
+                  </div>
+                </div>
               ))}
+              <div className="rounded-2xl border border-primary/20 bg-primary/10 p-4">
+                <p className="text-sm font-medium text-foreground">Available for full-stack and automation-focused work.</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  Best fit: internal tools, REST APIs, operational dashboards, and engineering workflow automation.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </motion.section>
@@ -252,7 +292,7 @@ export default function Home() {
                 </div>
                 <div className="rounded-2xl border border-border bg-muted/30 p-4">
                   <p className="text-xs uppercase tracking-eyebrow text-muted-foreground">Focus</p>
-                  <p className="mt-2 font-medium text-foreground">Frontend + Backend delivery</p>
+                  <p className="mt-2 font-medium text-foreground">Backend, dashboards, and automation</p>
                 </div>
               </div>
             </CardContent>
@@ -346,6 +386,10 @@ export default function Home() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="rounded-2xl border border-primary/20 bg-primary/10 p-4">
+                    <p className="text-xs uppercase tracking-eyebrow text-muted-foreground">Impact</p>
+                    <p className="mt-2 text-sm font-medium text-foreground">{item.impact}</p>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {item.technologies.map((tech) => (
                       <Badge key={tech} variant="outline">
@@ -369,8 +413,8 @@ export default function Home() {
         <motion.section id="projects" className="space-y-6" {...fadeIn(0.2)}>
           <SectionHeading
             eyebrow="Projects"
-            title="Selected projects"
-            description="Projects listed in the resume, presented as concise case notes."
+            title="Selected case studies"
+            description="Projects framed by problem, build approach, and outcome so recruiters can scan the proof quickly."
           />
           <div className="grid gap-4 md:grid-cols-2">
             {projects.map((project) => (
@@ -388,6 +432,20 @@ export default function Home() {
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     {project.description}
                   </p>
+                  <div className="grid gap-3">
+                    <div className="rounded-2xl border border-border bg-muted/25 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">Problem</p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground">{project.problem}</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-muted/25 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">Build</p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground">{project.approach}</p>
+                    </div>
+                    <div className="rounded-2xl border border-primary/20 bg-primary/10 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">Outcome</p>
+                      <p className="mt-2 text-sm font-medium leading-relaxed text-foreground">{project.outcome}</p>
+                    </div>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {project.technologies.map((tech) => (
                       <Badge key={tech} variant="outline">
@@ -402,6 +460,12 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
+                  <Button variant="outline" asChild>
+                    <a href={`mailto:arrkpong1@gmail.com?subject=${encodeURIComponent(`Question about ${project.title}`)}`}>
+                      Ask about this project
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -488,22 +552,30 @@ export default function Home() {
                 <Globe className="h-4 w-4 text-primary" />
                 github.com/arrkpong
               </a>
+              <a href="https://linkedin.com/in/arrkpong/" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground">
+                <Globe className="h-4 w-4 text-primary" />
+                linkedin.com/in/arrkpong
+              </a>
+              <a href="https://arrkpong.github.io/portfolio" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-muted-foreground">
+                <Globe className="h-4 w-4 text-primary" />
+                arrkpong.github.io/portfolio
+              </a>
             </CardContent>
           </Card>
 
-          <form className="space-y-4 rounded-3xl border border-border bg-card/70 p-6 shadow-sm" onSubmit={handleSubmit}>
+          <form className="space-y-4 rounded-3xl border border-border bg-card/70 p-6 shadow-sm" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label htmlFor="subject" className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
                 Subject
               </label>
               <Input
                 id="subject"
-                name="subject"
                 placeholder="Project, role, or collaboration"
                 autoComplete="off"
-                required
-                className="mt-2"
+                {...register('subject')}
+                className={`mt-2 ${errors.subject ? 'border-destructive' : ''}`}
               />
+              {errors.subject && <p className="mt-1 text-xs text-destructive">{errors.subject.message}</p>}
             </div>
             <div>
               <label htmlFor="email" className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
@@ -511,13 +583,13 @@ export default function Home() {
               </label>
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="you@example.com"
                 autoComplete="email"
-                required
-                className="mt-2"
+                {...register('email')}
+                className={`mt-2 ${errors.email ? 'border-destructive' : ''}`}
               />
+              {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>}
             </div>
             <div>
               <label htmlFor="notes" className="text-xs font-semibold uppercase tracking-eyebrow text-muted-foreground">
@@ -525,21 +597,18 @@ export default function Home() {
               </label>
               <Textarea
                 id="notes"
-                name="notes"
                 rows={5}
                 placeholder="Tell me what you're building..."
-                required
                 spellCheck
-                className="mt-2"
+                {...register('notes')}
+                className={`mt-2 ${errors.notes ? 'border-destructive' : ''}`}
               />
+              {errors.notes && <p className="mt-1 text-xs text-destructive">{errors.notes.message}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? 'Sending...' : 'Send message'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <p aria-live="polite" className={`min-h-5 text-sm ${submitTone}`}>
-              {submitMessage}
-            </p>
             {!contactEndpoint ? (
               <p className="text-xs text-muted-foreground">
                 Add `VITE_CONTACT_FORM_ENDPOINT` in `.env` to enable real email delivery.
